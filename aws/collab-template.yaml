@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "meetup collaboration instance"
+Parameters:
+  HostedZoneNameParameter:
+    Type: String
+    Default: "seespotcode.net."
+  SubDomainParameter:
+    Type: String
+    Default: meetup
+  KeyNameParameter:
+    Type: String
+    Default: clojure-mn-meetup-keypair
+  InstanceTypeParameter:
+    Type: String
+    Default: t2.micro
+  ImageIdParameter:
+    Type: String
+    Default: ami-da05a4a0
+  MeetupPasswordParameter:
+    Type: String
+Resources:
+  CollabSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Enable SSH access via port 22 and ping"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: "0.0.0.0/0"
+        - IpProtocol: tcp
+          FromPort: 45670
+          ToPort: 45690
+          CidrIp: "0.0.0.0/0"
+        - IpProtocol: icmp
+          FromPort: 8
+          ToPort: -1
+          CidrIp: "0.0.0.0/0"
+  CollabInstance:
+    Type: "AWS::EC2::Instance"
+    Metadata:
+      AWS::CloudFormation::Init:
+        configSets:
+          install_all: [install]
+        groups:
+          meetup: {}
+        install:
+          packages:
+            apt:
+              git: []
+              emacs: []
+              tmux: []
+              default-jre: []
+              default-jdk: []
+          commands:
+            x010_create_user:
+              command: "useradd -m meetup"
+            x020_add_password:
+              command: !Sub "echo meetup:${MeetupPasswordParameter} | chpasswd"
+            x030_allow_password_access:
+              command: "sed -i.bk -e 's/^\\(PasswordAuthentication \\)no/\\1yes/' /etc/ssh/sshd_config"
+            x040_restart_ssh_service:
+              command: "service ssh restart"
+            x050_install_collab_setup:
+              command: "su - meetup -c 'git clone https://github.com/grzm/plexiform.git'"
+            x060_setup_meetup_collab:
+              command: "su - meetup -c '~/plexiform/script/setup.sh'"
+    Properties:
+      ImageId: !Ref ImageIdParameter
+      InstanceType: !Ref InstanceTypeParameter
+      KeyName: !Ref KeyNameParameter
+      SecurityGroups: [!Ref CollabSecurityGroup]
+      Tags:
+        - Key: Name
+          Value: meetup-collab-instance
+      UserData:
+        Fn::Base64:
+          !Sub |
+          #!/bin/bash
+          apt-get -y update
+          apt-get -y install python-pip
+          pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
+          /usr/local/bin/cfn-init \
+            --configsets install_all \
+            --stack ${AWS::StackName} \
+            --resource CollabInstance
+  CollabDNSRecordSet:
+    Type: "AWS::Route53::RecordSet"
+    Properties:
+      HostedZoneName: !Ref HostedZoneNameParameter
+      Comment: "DNS name for my instance"
+      Name:
+        !Join
+        - "."
+        - [!Ref SubDomainParameter, !Ref HostedZoneNameParameter]
+      Type: A
+      TTL: 900
+      ResourceRecords:
+        - !GetAtt CollabInstance.PublicIp
+Outputs:
+  InstanceId:
+    Description: "InstanceId of newly created EC2 instance"
+    Value: !Ref CollabInstance
+  PublicDNS:
+    Description: "Public DNS name of the newly created EC2 instance"
+    Value: !GetAtt CollabInstance.PublicDnsName
+  PublicIP:
+    Description: "Public IP address of the newly created EC2 instance"
+    Value: !GetAtt CollabInstance.PublicIp
