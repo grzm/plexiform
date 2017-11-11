@@ -1,9 +1,10 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 set -eux
 set -o pipefail
 
 # install spacemacs
 git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
+cp ~/plexiform/dotfiles/spacemacs ~/.spacemacs
 
 # install lein and boot
 mkdir ~/bin
