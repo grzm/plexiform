@@ -110,4 +110,4 @@ Outputs:
     Value: !GetAtt CollabInstance.PublicIp
   Password:
     Description: "SSH password for meetup user"
-    Value: !GetAtt MeetupPasswordParameter
+    Value: !Ref MeetupPasswordParameter
