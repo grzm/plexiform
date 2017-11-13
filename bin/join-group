@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+Create or attach to group tmux session.
+
+set -eu
+
+## Note this requires knowledge of how meetup-collab groups are
+## located and named.
+
+BASE_PORT_NUMBER=45670
+COLLAB_HOST=meetup.seespotcode.net
+CURRENT_COLLAB_DIR=~/meetup-collab/current/
+
+GROUP_NUMBER=${1}
+GROUPNAME="group${GROUP_NUMBER}"
+
+export LEIN_FIGWHEEL_PORT=$((BASE_PORT_NUMBER+GROUP_NUMBER))
+export LEIN_FIGWHEEL_HOST="${COLLAB_HOST}"
+cd ${CURRENT_COLLAB_DIR}/${GROUP_NAME}
+tmux new -A -s "${GROUP_NAME}"

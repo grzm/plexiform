@@ -14,3 +14,8 @@ curl -fsSLo lein https://raw.githubusercontent.com/technomancy/leiningen/stable/
     && chmod 755 lein
 curl -fsSLo boot https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh \
     && chmod 755 boot
+
+cd ~/
+git clone https://github.com/grzm/meetup-collab.git
+
+ln -s ~/bin/join-group ~/bin/meetup-collab/bin/join-group
