@@ -64,7 +64,7 @@ Resources:
             x050_install_collab_setup:
               command: "su - meetup -c 'git clone https://github.com/grzm/plexiform.git'"
             x060_setup_meetup_collab:
-              command: "su - meetup -c '~/plexiform/script/setup.sh'"
+              command: "su - meetup -c '~/plexiform/script/init'"
     Properties:
       ImageId: !Ref ImageIdParameter
       InstanceType: !Ref InstanceTypeParameter
