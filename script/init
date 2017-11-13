@@ -18,4 +18,7 @@ curl -fsSLo boot https://github.com/boot-clj/boot-bin/releases/download/latest/b
 cd ~/
 git clone https://github.com/grzm/meetup-collab.git
 
-ln -s ~/bin/join-group ~/bin/meetup-collab/bin/join-group
+cat <<"EOF" >> ~/.profile
+# add plexiform/bin to path
+PATH="$HOME/plexiform/bin:$PATH"
+EOF
