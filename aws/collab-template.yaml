@@ -56,6 +56,8 @@ Resources:
           commands:
             x010_create_user:
               command: "useradd -m meetup"
+            x015_create_user:
+              command: "chsh -s /bin/bash meetup"
             x020_add_password:
               command: !Sub "echo meetup:${MeetupPasswordParameter} | chpasswd"
             x030_allow_password_access:
