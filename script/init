@@ -2,9 +2,14 @@
 set -eux
 set -o pipefail
 
+DOTFILES_PATH="$HOME/plexiform/dotfiles"
+
 # install spacemacs
 git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
-cp ~/plexiform/dotfiles/spacemacs ~/.spacemacs
+cp ${DOTFILES_PATH}/spacemacs ~/.spacemacs
+
+# install gitconfig
+cp ${DOTFILES_PATH}/gitconfig ~/.gitconfig
 
 # install lein and boot
 mkdir ~/bin
