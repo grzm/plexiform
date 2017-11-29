@@ -53,6 +53,9 @@ Resources:
               tmux: []
               default-jre: []
               default-jdk: []
+              python3-pip: []
+              zip: []
+              unzip: []
           commands:
             x010_create_user:
               command: "useradd -m meetup"
