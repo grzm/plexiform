@@ -5,6 +5,7 @@
 
 [alias]
     # Common abbreviations
+    br = branch
     ci = commit -v
     co = checkout
     id = describe
